@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OC2 Creator Dashboard - Mockup</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-primary: #5E6AD2;
+            --color-primary-light: #818CF8;
+            --color-primary-dark: #4C1D95;
+            --color-secondary: #F59E0B;
+            --color-accent: #06B6D4;
+            --color-success: #10B981;
+            --color-warning: #F59E0B;
+            --color-error: #EF4444;
+            --color-white: #FFFFFF;
+            --color-gray-50: #FAFBFC;
+            --color-gray-100: #F4F6F8;
+            --color-gray-200: #E9ECEF;
+            --color-gray-300: #DEE2E6;
+            --color-gray-400: #CED4DA;
+            --color-gray-500: #ADB5BD;
+            --color-gray-600: #6C757D;
+            --color-gray-700: #495057;
+            --color-gray-800: #343A40;
+            --color-gray-900: #212529;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--color-gray-50);
+            color: var(--color-gray-900);
+            line-height: 1.6;
+        }
+
+        /* Layout Structure */
+        .creator-layout {
+            display: grid;
+            grid-template-columns: 80px 280px 1fr 320px;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* Sidebar Navigation */
+        .sidebar-nav {
+            background: var(--color-gray-900);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 0;
+            gap: 1rem;
+        }
+
+        .nav-icon {
+            width: 48px;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-gray-400);
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .nav-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--color-white);
+        }
+
+        .nav-icon.active {
+            background: var(--color-primary);
+            color: var(--color-white);
+        }
+
+        .nav-icon svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .nav-tooltip {
+            position: absolute;
+            left: 65px;
+            background: var(--color-gray-800);
+            color: var(--color-white);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-size: 0.875rem;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s;
+        }
+
+        .nav-icon:hover .nav-tooltip {
+            opacity: 1;
+        }
+
+        /* Component Panel */
+        .component-panel {
+            background: var(--color-white);
+            border-right: 1px solid var(--color-gray-200);
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .panel-header {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .component-search {
+            width: 100%;
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--color-gray-300);
+            border-radius: 8px;
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+
+        .component-category {
+            margin-bottom: 1.5rem;
+        }
+
+        .category-title {
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--color-gray-600);
+            margin-bottom: 0.75rem;
+        }
+
+        .component-item {
+            background: var(--color-gray-50);
+            border: 1px solid var(--color-gray-200);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.5rem;
+            cursor: move;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .component-item:hover {
+            border-color: var(--color-primary);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .component-item.dragging {
+            opacity: 0.5;
+        }
+
+        .component-icon {
+            width: 36px;
+            height: 36px;
+            background: var(--color-white);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-primary);
+            flex-shrink: 0;
+        }
+
+        /* Canvas Area */
+        .canvas-area {
+            background: #F8F9FA;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .canvas-header {
+            background: var(--color-white);
+            border-bottom: 1px solid var(--color-gray-200);
+            padding: 1rem 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-shrink: 0;
+        }
+
+        .device-switcher {
+            display: flex;
+            gap: 0.5rem;
+            background: var(--color-gray-100);
+            padding: 0.25rem;
+            border-radius: 8px;
+        }
+
+        .device-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: all 0.2s;
+        }
+
+        .device-btn.active {
+            background: var(--color-white);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        }
+
+        .canvas-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--color-gray-300);
+            background: var(--color-white);
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            border-color: var(--color-primary);
+        }
+
+        .action-btn.primary {
+            background: var(--color-primary);
+            color: var(--color-white);
+            border-color: var(--color-primary);
+        }
+
+        .canvas-viewport {
+            flex: 1;
+            padding: 2rem;
+            overflow: auto;
+            display: flex;
+            justify-content: center;
+        }
+
+        .canvas-content {
+            background: var(--color-white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 1200px;
+            min-height: 600px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .canvas-content.mobile {
+            max-width: 375px;
+        }
+
+        .canvas-content.tablet {
+            max-width: 768px;
+        }
+
+        /* Properties Panel */
+        .properties-panel {
+            background: var(--color-white);
+            border-left: 1px solid var(--color-gray-200);
+            padding: 1.5rem;
+            overflow-y: auto;
+        }
+
+        .property-group {
+            margin-bottom: 2rem;
+        }
+
+        .property-label {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-gray-700);
+            margin-bottom: 0.5rem;
+        }
+
+        .property-input {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--color-gray-300);
+            border-radius: 6px;
+            font-size: 0.875rem;
+        }
+
+        .property-textarea {
+            width: 100%;
+            padding: 0.5rem 0.75rem;
+            border: 1px solid var(--color-gray-300);
+            border-radius: 6px;
+            font-size: 0.875rem;
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .color-picker-wrapper {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .color-preview {
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            border: 1px solid var(--color-gray-300);
+            cursor: pointer;
+        }
+
+        /* Mock Canvas Content */
+        .mock-header {
+            padding: 2rem;
+            text-align: center;
+            position: relative;
+        }
+
+        .mock-header.editing {
+            outline: 2px dashed var(--color-primary);
+            outline-offset: 4px;
+        }
+
+        .edit-indicator {
+            position: absolute;
+            top: -20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-primary);
+            color: var(--color-white);
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+
+        .mock-tabs {
+            display: flex;
+            gap: 1rem;
+            padding: 0 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .mock-tab {
+            padding: 0.75rem 1.5rem;
+            background: var(--color-gray-100);
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .mock-tab.active {
+            background: var(--color-primary);
+            color: var(--color-white);
+        }
+
+        .drop-zone {
+            border: 2px dashed var(--color-gray-300);
+            border-radius: 8px;
+            padding: 3rem;
+            margin: 2rem;
+            text-align: center;
+            color: var(--color-gray-500);
+            transition: all 0.2s;
+        }
+
+        .drop-zone.active {
+            border-color: var(--color-primary);
+            background: rgba(94, 106, 210, 0.05);
+        }
+
+        /* Floating Toolbar */
+        .floating-toolbar {
+            position: absolute;
+            top: -45px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--color-gray-900);
+            border-radius: 8px;
+            padding: 0.5rem;
+            display: flex;
+            gap: 0.25rem;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        }
+
+        .toolbar-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--color-white);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toolbar-btn:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Layout Grid Overlay */
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            background-image: 
+                linear-gradient(to right, rgba(94, 106, 210, 0.1) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(94, 106, 210, 0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .show-grid .grid-overlay {
+            opacity: 1;
+        }
+
+        /* Rich Text Editor Mock */
+        .rich-editor {
+            background: var(--color-white);
+            border: 1px solid var(--color-gray-300);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .editor-toolbar {
+            background: var(--color-gray-50);
+            border-bottom: 1px solid var(--color-gray-200);
+            padding: 0.5rem;
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+
+        .editor-btn {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--color-gray-300);
+            background: var(--color-white);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .editor-btn:hover {
+            background: var(--color-gray-100);
+        }
+
+        .editor-separator {
+            width: 1px;
+            background: var(--color-gray-300);
+            margin: 0 0.25rem;
+        }
+
+        .editor-content {
+            padding: 1rem;
+            min-height: 150px;
+        }
+
+        /* Component Settings */
+        .settings-tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 1px solid var(--color-gray-200);
+        }
+
+        .settings-tab {
+            padding: 0.5rem 1rem;
+            border: none;
+            background: none;
+            cursor: pointer;
+            font-size: 0.875rem;
+            color: var(--color-gray-600);
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .settings-tab.active {
+            color: var(--color-primary);
+            border-bottom-color: var(--color-primary);
+        }
+
+        /* History Panel */
+        .history-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .history-item:hover {
+            background: var(--color-gray-50);
+        }
+
+        .history-icon {
+            width: 32px;
+            height: 32px;
+            background: var(--color-gray-100);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.875rem;
+        }
+
+        .history-details {
+            flex: 1;
+        }
+
+        .history-action {
+            font-size: 0.875rem;
+            font-weight: 500;
+            color: var(--color-gray-900);
+        }
+
+        .history-time {
+            font-size: 0.75rem;
+            color: var(--color-gray-500);
+        }
+    </style>
+</head>
+<body>
+    <div class="creator-layout">
+        <!-- Left Sidebar Navigation -->
+        <nav class="sidebar-nav">
+            <div class="nav-icon active">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path>
+                </svg>
+                <span class="nav-tooltip">Page Builder</span>
+            </div>
+            <div class="nav-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
+                </svg>
+                <span class="nav-tooltip">Content</span>
+            </div>
+            <div class="nav-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                </svg>
+                <span class="nav-tooltip">Analytics</span>
+            </div>
+            <div class="nav-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path>
+                </svg>
+                <span class="nav-tooltip">Settings</span>
+            </div>
+            <div style="flex: 1;"></div>
+            <div class="nav-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <span class="nav-tooltip">Help</span>
+            </div>
+        </nav>
+
+        <!-- Component Panel -->
+        <aside class="component-panel">
+            <h2 class="panel-header">
+                Components
+                <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                </svg>
+            </h2>
+            
+            <input type="text" class="component-search" placeholder="Search components...">
+            
+            <div class="component-category">
+                <div class="category-title">Layout</div>
+                <div class="component-item" draggable="true">
+                    <div class="component-icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">Section</div>
+                        <div style="font-size: 0.75rem; color: var(--color-gray-600);">Container with padding</div>
+                    </div>
+                </div>
+                <div class="component-item" draggable="true">
+                    <div class="component-icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">Grid</div>
+                        <div style="font-size: 0.75rem; color: var(--color-gray-600);">Responsive columns</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="component-category">
+                <div class="category-title">OC2 Components</div>
+                <div class="component-item" draggable="true">
+                    <div class="component-icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">Tab Container</div>
+                        <div style="font-size: 0.75rem; color: var(--color-gray-600);">Multi-tab layout</div>
+                    </div>
+                </div>
+                <div class="component-item" draggable="true">
+                    <div class="component-icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">Accordion</div>
+                        <div style="font-size: 0.75rem; color: var(--color-gray-600);">Expandable content</div>
+                    </div>
+                </div>
+                <div class="component-item" draggable="true">
+                    <div class="component-icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">KPI Chart</div>
+                        <div style="font-size: 0.75rem; color: var(--color-gray-600);">Data visualization</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="component-category">
+                <div class="category-title">Content</div>
+                <div class="component-item" draggable="true">
+                    <div class="component-icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h7"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">Rich Text</div>
+                        <div style="font-size: 0.75rem; color: var(--color-gray-600);">WYSIWYG editor</div>
+                    </div>
+                </div>
+                <div class="component-item" draggable="true">
+                    <div class="component-icon">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
+                        </svg>
+                    </div>
+                    <div>
+                        <div style="font-weight: 500;">Image</div>
+                        <div style="font-size: 0.75rem; color: var(--color-gray-600);">Upload or URL</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Canvas Area -->
+        <main class="canvas-area">
+            <header class="canvas-header">
+                <div style="display: flex; align-items: center; gap: 2rem;">
+                    <h1 style="font-size: 1.25rem; font-weight: 600;">OC2 Dashboard</h1>
+                    <div class="device-switcher">
+                        <button class="device-btn active">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            Desktop
+                        </button>
+                        <button class="device-btn">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                            </svg>
+                            Tablet
+                        </button>
+                        <button class="device-btn">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+                            </svg>
+                            Mobile
+                        </button>
+                    </div>
+                </div>
+                <div class="canvas-actions">
+                    <button class="action-btn">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path>
+                        </svg>
+                        Show Grid
+                    </button>
+                    <button class="action-btn">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"></path>
+                        </svg>
+                        Undo
+                    </button>
+                    <button class="action-btn">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 10H11a8 8 0 00-8 8v2m18-10l-6 6m6-6l-6-6"></path>
+                        </svg>
+                        Redo
+                    </button>
+                    <button class="action-btn">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                        Preview
+                    </button>
+                    <button class="action-btn primary">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                        </svg>
+                        Save
+                    </button>
+                    <button class="action-btn primary">
+                        <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                        Publish
+                    </button>
+                </div>
+            </header>
+
+            <div class="canvas-viewport">
+                <div class="canvas-content show-grid">
+                    <div class="grid-overlay"></div>
+                    
+                    <!-- Mock OC2 Content Being Edited -->
+                    <div class="mock-header editing">
+                        <span class="edit-indicator">Editing Header</span>
+                        <div class="floating-toolbar">
+                            <div class="toolbar-btn" title="Move Up">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 15l7-7 7 7"></path>
+                                </svg>
+                            </div>
+                            <div class="toolbar-btn" title="Move Down">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                                </svg>
+                            </div>
+                            <div class="toolbar-btn" title="Duplicate">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"></path>
+                                </svg>
+                            </div>
+                            <div class="toolbar-btn" title="Delete" style="color: #EF4444;">
+                                <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <h1 style="font-size: 3rem; font-weight: 800; margin-bottom: 1rem; background: linear-gradient(135deg, #5E6AD2 0%, #06B6D4 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent;">
+                            OC2 Framework
+                        </h1>
+                        <p style="color: #6C757D; max-width: 48rem; margin: 0 auto;">
+                            An interactive strategic framework for transforming communication into a strategic asset at MEDIAGENIX.
+                        </p>
+                    </div>
+
+                    <div class="mock-tabs">
+                        <div class="mock-tab active">Amplify Strategy</div>
+                        <div class="mock-tab">Cultivate Dialogue</div>
+                        <div class="mock-tab">Constructive Challenge</div>
+                        <div class="mock-tab">+ Add Tab</div>
+                    </div>
+
+                    <div class="drop-zone active">
+                        <svg width="48" height="48" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="margin: 0 auto 1rem; opacity: 0.3;">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                        <p>Drop components here or click the + button to add content</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Properties Panel -->
+        <aside class="properties-panel">
+            <h2 class="panel-header">Properties</h2>
+            
+            <div class="settings-tabs">
+                <button class="settings-tab active">Content</button>
+                <button class="settings-tab">Style</button>
+                <button class="settings-tab">Advanced</button>
+            </div>
+
+            <!-- Content Tab -->
+            <div class="property-group">
+                <label class="property-label">Heading Text</label>
+                <input type="text" class="property-input" value="OC2 Framework">
+            </div>
+
+            <div class="property-group">
+                <label class="property-label">Description</label>
+                <textarea class="property-textarea">An interactive strategic framework for transforming communication into a strategic asset at MEDIAGENIX.</textarea>
+            </div>
+
+            <div class="property-group">
+                <label class="property-label">Rich Content Editor</label>
+                <div class="rich-editor">
+                    <div class="editor-toolbar">
+                        <button class="editor-btn" title="Bold">
+                            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M15 12a3.5 3.5 0 01-3.5 3.5H8V20h3.5a3.5 3.5 0 110-7H15zm-2.5-4a3 3 0 110-6H8v6h4.5z"></path>
+                            </svg>
+                        </button>
+                        <button class="editor-btn" title="Italic">
+                            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M10 4h6l-4 16H6l4-16z"></path>
+                            </svg>
+                        </button>
+                        <button class="editor-btn" title="Underline">
+                            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M8 3v9a4 4 0 108 0V3h2v9a6 6 0 11-12 0V3h2zM4 20h16v2H4v-2z"></path>
+                            </svg>
+                        </button>
+                        <div class="editor-separator"></div>
+                        <button class="editor-btn" title="Link">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path>
+                            </svg>
+                        </button>
+                        <button class="editor-btn" title="Reference">
+                            <span style="font-size: 10px; font-weight: 600;">REF</span>
+                        </button>
+                    </div>
+                    <div class="editor-content" contenteditable="true">
+                        Type your content here...
+                    </div>
+                </div>
+            </div>
+
+            <div class="property-group">
+                <label class="property-label">Background Color</label>
+                <div class="color-picker-wrapper">
+                    <div class="color-preview" style="background: #5E6AD2;"></div>
+                    <input type="text" class="property-input" value="#5E6AD2" style="flex: 1;">
+                </div>
+            </div>
+
+            <hr style="margin: 2rem 0; border: none; border-top: 1px solid var(--color-gray-200);">
+
+            <div class="property-group">
+                <label class="property-label" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                    Version History
+                </label>
+                <div style="margin-top: 1rem;">
+                    <div class="history-item">
+                        <div class="history-icon">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                            </svg>
+                        </div>
+                        <div class="history-details">
+                            <div class="history-action">Header text updated</div>
+                            <div class="history-time">2 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-icon">+</div>
+                        <div class="history-details">
+                            <div class="history-action">Tab section added</div>
+                            <div class="history-time">5 minutes ago</div>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-icon">
+                            <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"></path>
+                            </svg>
+                        </div>
+                        <div class="history-details">
+                            <div class="history-action">Theme colors changed</div>
+                            <div class="history-time">1 hour ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+</body>
+</html>

@@ -1,0 +1,48 @@
+graph TD
+    %% Nodes
+    action_creators[action_creators]
+    enhanced_state[enhanced_state]
+    history_manager[history_manager]:::complex
+    history_middleware[history_middleware]:::complex
+    project[project]:::leaf
+    project_enhanced[project_enhanced]:::leaf
+    project_state_integrated[project_state_integrated]
+    spatial_index[spatial_index]:::leaf
+    state[state]:::leaf
+    state_integration[state_integration]:::complex
+    state_manager[state_manager]:::complex
+    state_middleware[state_middleware]:::complex
+    state_migration[state_migration]:::leaf
+    state_synchronizer[state_synchronizer]
+    state_types[state_types]:::core
+
+    %% Edges
+    action_creators --> state_types
+    enhanced_state --> action_creators
+    enhanced_state --> state_integration
+    history_manager --> state_types
+    history_middleware --> history_manager
+    history_middleware --> state_manager
+    history_middleware --> state_types
+    project_state_integrated --> action_creators
+    project_state_integrated --> enhanced_state
+    project_state_integrated --> state_types
+    state_integration --> action_creators
+    state_integration --> history_manager
+    state_integration --> history_middleware
+    state_integration --> state_manager
+    state_integration --> state_middleware
+    state_integration --> state_synchronizer
+    state_integration --> state_types
+    state_manager --> state_migration
+    state_manager --> state_types
+    state_middleware --> state_manager
+    state_middleware --> state_types
+    state_synchronizer --> state_manager
+    state_synchronizer --> state_types
+    state_types --> spatial_index
+
+    %% Styling
+    classDef core fill:#ff9999,stroke:#333,stroke-width:2px;
+    classDef leaf fill:#99ff99,stroke:#333,stroke-width:2px;
+    classDef complex fill:#9999ff,stroke:#333,stroke-width:2px;
